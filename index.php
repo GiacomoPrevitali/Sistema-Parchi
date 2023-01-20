@@ -81,7 +81,7 @@ session_start();
   }
   ?>
 </select>
-<input   type="hidden"name="Nome_Parco" value="<?php echo $_GET['Nome_Parco']; ?>">
+<input   type="hidden"name="Nome_Parco" value="<?php if(isset($_GET['Nome_Parco'])){echo $_GET['Nome_Parco'];} ?>">
 <button class="btn btn-outline-success" type="submit">Cerca</button>
 </form>
  <br>
@@ -93,7 +93,7 @@ if(isset($_GET['Specie_Richiesta'])){
   $username='root';
   $password='';
   $database='sistem';
-  $_SESSION['specie'] = $_GET['Specie_Richiesta'];
+  $_SESSION['specie'] = $_GET['Specie_Richiesta']; 
   echo'<script>document.getElementById("i_specie").value="'.$_SESSION["specie"].'"</script>';
   echo'<script>document.getElementById("Nome_P").value="'.$_SESSION["N_Parco"].'"</script>';
   //echo $_GET['Nome_Parco'];
@@ -103,21 +103,20 @@ if(isset($_GET['Specie_Richiesta'])){
   }
   $sql='SELECT Data_Nascita FROM animale WHERE Id_Specie="'.$_REQUEST['Specie_Richiesta'].'" AND Id_Parco="'.$_SESSION['N_Parco'].'"';
   $result =$connection->query($sql);
-  $year=0;
-      $month=0;
-      $day=0;
       $count=0;
+      $e=0;
   if($result->num_rows>0){
     while($row=$result->fetch_assoc()){
     
       $data_iniziale = new DateTime($row['Data_Nascita']); 
       $data_finale = new Datetime(date('m.d.y'));
-      
+
       $diff = $data_finale->diff($data_iniziale);
-      $year=+$diff->y;
+      $diff = $diff->format('%y');
+      $e = $e + $diff;
       $count++;
     }
-    $media=$year/$count;
+    $media=$e/$count;
     $media=floor($media);
     if($count==1){
       echo "In questo parco è presente: ". $count. " esemplare di ".$_REQUEST['Specie_Richiesta']. " con un'età di ".$media. " anni";
